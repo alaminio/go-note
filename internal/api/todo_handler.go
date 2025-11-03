@@ -124,3 +124,39 @@ func (h *TodoHandler) ToggleTodoComplete(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"message": "Todo completion toggled"})
 }
+
+func (h *TodoHandler) GetCompletedTodos(c *gin.Context) {
+	todos, err := h.service.GetCompletedTodos()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, todos)
+}
+
+func (h *TodoHandler) GetPendingTodos(c *gin.Context) {
+	todos, err := h.service.GetPendingTodos()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, todos)
+}
+
+func (h *TodoHandler) GetTodosByTitle(c *gin.Context) {
+	text := c.Param("text")
+	if text == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Search text is required"})
+		return
+	}
+
+	todos, err := h.service.GetTodosByTitle(text)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, todos)
+}

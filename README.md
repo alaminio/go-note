@@ -69,6 +69,7 @@ The server will start on `http://localhost:8080`.
 ### Notes
 - `POST /api/notes` - Create a new note
 - `GET /api/notes` - Get all notes
+- `GET /api/notes/search?title=test&content=example` - Search notes by title and/or content (OR condition)
 - `GET /api/notes/:id` - Get a specific note
 - `PUT /api/notes/:id` - Update a note
 - `DELETE /api/notes/:id` - Delete a note
@@ -80,6 +81,9 @@ The server will start on `http://localhost:8080`.
 - `PUT /api/todos/:id` - Update a todo
 - `DELETE /api/todos/:id` - Delete a todo
 - `PATCH /api/todos/:id/toggle` - Toggle todo completion status
+- `GET /api/todos/completed` - Get all completed todos
+- `GET /api/todos/pending` - Get all pending todos
+- `GET /api/todos/search/:text` - Search todos by title containing text
 
 ## Example Usage
 
@@ -94,6 +98,21 @@ curl -X POST http://localhost:8080/api/notes \
 Get all notes:
 ```bash
 curl http://localhost:8080/api/notes
+```
+
+Search notes:
+```bash
+# Search by title only
+curl "http://localhost:8080/api/notes/search?title=test"
+
+# Search by content only
+curl "http://localhost:8080/api/notes/search?content=example"
+
+# Search by both title and content (OR condition - matches either)
+curl "http://localhost:8080/api/notes/search?title=test&content=example"
+
+# No parameters - returns all notes
+curl "http://localhost:8080/api/notes/search"
 ```
 
 ### Todos

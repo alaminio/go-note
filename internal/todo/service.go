@@ -50,3 +50,15 @@ func (s *Service) DeleteTodo(id uint) error {
 func (s *Service) ToggleTodoComplete(id uint) error {
 	return s.repo.ToggleComplete(id)
 }
+
+func (s *Service) GetCompletedTodos() ([]Todo, error) {
+	return s.repo.GetCompleted()
+}
+
+func (s *Service) GetPendingTodos() ([]Todo, error) {
+	return s.repo.GetPending()
+}
+
+func (s *Service) GetTodosByTitle(text string) ([]Todo, error) {
+	return s.repo.GetByTitleContaining(text)
+}

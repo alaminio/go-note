@@ -1,6 +1,7 @@
 package db
 
 import (
+	"go-note/configs"
 	"go-note/internal/note"
 	"go-note/internal/todo"
 	"log"
@@ -12,8 +13,16 @@ import (
 var DB *gorm.DB
 
 func ConnectDB() (*gorm.DB, error) {
+	config := configs.GetConfig()
 	var err error
-	DB, err = gorm.Open(sqlite.Open("notes.db"), &gorm.Config{})
+
+	switch config.DBDriver {
+	case "sqlite":
+		DB, err = gorm.Open(sqlite.Open(config.DBName), &gorm.Config{})
+	default:
+		DB, err = gorm.Open(sqlite.Open(config.DBName), &gorm.Config{})
+	}
+
 	if err != nil {
 		return nil, err
 	}

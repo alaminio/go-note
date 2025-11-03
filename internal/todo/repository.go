@@ -48,3 +48,21 @@ func (r *Repository) ToggleComplete(id uint) error {
 	todo.Completed = !todo.Completed
 	return r.db.Save(&todo).Error
 }
+
+func (r *Repository) GetCompleted() ([]Todo, error) {
+	var todos []Todo
+	err := r.db.Where("completed = ?", true).Find(&todos).Error
+	return todos, err
+}
+
+func (r *Repository) GetPending() ([]Todo, error) {
+	var todos []Todo
+	err := r.db.Where("completed = ?", false).Find(&todos).Error
+	return todos, err
+}
+
+func (r *Repository) GetByTitleContaining(text string) ([]Todo, error) {
+	var todos []Todo
+	err := r.db.Where("title LIKE ?", "%"+text+"%").Find(&todos).Error
+	return todos, err
+}

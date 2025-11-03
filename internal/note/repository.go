@@ -38,3 +38,25 @@ func (r *Repository) Update(note *Note) error {
 func (r *Repository) Delete(id uint) error {
 	return r.db.Delete(&Note{}, id).Error
 }
+
+func (r *Repository) SearchByTitleOrContent(title, content string) ([]Note, error) {
+	var notes []Note
+	query := r.db
+
+	if title != "" && content != "" {
+		// Both title and content provided - OR condition
+		query = query.Where("title LIKE ? OR content LIKE ?", "%"+title+"%", "%"+content+"%")
+	} else if title != "" {
+		// Only title provided
+		query = query.Where("title LIKE ?", "%"+title+"%")
+	} else if content != "" {
+		// Only content provided
+		query = query.Where("content LIKE ?", "%"+content+"%")
+	} else {
+		// No search parameters - return all notes
+		return r.GetAll()
+	}
+
+	err := query.Find(&notes).Error
+	return notes, err
+}

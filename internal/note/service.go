@@ -45,3 +45,7 @@ func (s *Service) UpdateNote(id uint, title, content string) (*Note, error) {
 func (s *Service) DeleteNote(id uint) error {
 	return s.repo.Delete(id)
 }
+
+func (s *Service) SearchNotes(title, content string) ([]Note, error) {
+	return s.repo.SearchByTitleOrContent(title, content)
+}

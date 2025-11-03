@@ -107,3 +107,17 @@ func (h *NoteHandler) DeleteNote(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"message": "Note deleted"})
 }
+
+func (h *NoteHandler) SearchNotes(c *gin.Context) {
+	title := c.Query("title")
+	content := c.Query("content")
+
+	// Allow empty parameters - will return all notes if both are empty
+	notes, err := h.service.SearchNotes(title, content)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, notes)
+}
