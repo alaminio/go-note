@@ -2,6 +2,7 @@ package db
 
 import (
 	"go-note/internal/note"
+	"go-note/internal/todo"
 	"log"
 
 	"gorm.io/driver/sqlite"
@@ -18,7 +19,7 @@ func ConnectDB() (*gorm.DB, error) {
 	}
 
 	// Auto migrate the schema
-	err = DB.AutoMigrate(&note.Note{})
+	err = DB.AutoMigrate(&note.Note{}, &todo.Todo{})
 	if err != nil {
 		return nil, err
 	}
