@@ -1,11 +1,13 @@
 package db
 
 import (
+	"database/sql"
 	"go-note/configs"
-	"go-note/internal/note"
-	"go-note/internal/todo"
 	"log"
 
+	"github.com/golang-migrate/migrate/v4"
+	_ "github.com/golang-migrate/migrate/v4/database/sqlite3"
+	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
@@ -27,14 +29,42 @@ func ConnectDB() (*gorm.DB, error) {
 		return nil, err
 	}
 
-	// Auto migrate the schema
-	err = DB.AutoMigrate(&note.Note{}, &todo.Todo{})
+	// Run migrations
+	err = RunMigrations(config.DBName)
 	if err != nil {
 		return nil, err
 	}
 
 	log.Println("Database connected and migrated")
 	return DB, nil
+}
+
+func RunMigrations(dbPath string) error {
+	// Open database connection for migration
+	sqlDB, err := sql.Open("sqlite3", dbPath)
+	if err != nil {
+		return err
+	}
+	defer sqlDB.Close()
+
+	// Create migrate instance
+	m, err := migrate.New(
+		"file://migrations",
+		"sqlite3://"+dbPath,
+	)
+	if err != nil {
+		return err
+	}
+	defer m.Close()
+
+	// Run all up migrations
+	err = m.Up()
+	if err != nil && err != migrate.ErrNoChange {
+		return err
+	}
+
+	log.Println("Migrations completed successfully")
+	return nil
 }
 
 func GetDB() *gorm.DB {
